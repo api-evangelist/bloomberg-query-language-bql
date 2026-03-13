@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://api.bloomberg.com/schemas/bql/security.json",
+  "title": "Bloomberg BQL Security",
+  "description": "A financial security or instrument in Bloomberg's data universe, identified by its Bloomberg ticker and associated metadata used in BQL queries for data retrieval and analysis.",
+  "type": "object",
+  "required": ["ticker"],
+  "properties": {
+    "ticker": {
+      "type": "string",
+      "description": "Bloomberg ticker symbol uniquely identifying the security, including the yellow key suffix indicating asset class (e.g., 'AAPL US Equity', 'US0001M Index').",
+      "minLength": 1,
+      "examples": [
+        "AAPL US Equity",
+        "MSFT US Equity",
+        "SPX Index",
+        "US0001M Index",
+        "USGG10YR Index",
+        "EUR Curncy",
+        "CL1 Comdty"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "description": "Full name of the security."
+    },
+    "shortName": {
+      "type": "string",
+      "description": "Abbreviated name of the security."
+    },
+    "securityType": {
+      "type": "string",
+      "description": "Classification of the security by instrument type.",
+      "enum": [
+        "Equity",
+        "FixedIncome",
+        "Index",
+        "Currency",
+        "Commodity",
+        "Fund",
+        "Mortgage",
+        "Municipal",
+        "Preferred",
+        "Derivative",
+        "MoneyMarket"
+      ]
+    },
+    "exchange": {
+      "type": "string",
+      "description": "Primary exchange where the security is listed or traded.",
+      "examples": ["US", "LN", "JP", "HK", "GR"]
+    },
+    "country": {
+      "type": "string",
+      "description": "ISO 3166-1 alpha-2 country code of the security's primary listing.",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 currency code of the security's primary trading currency.",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "figi": {
+      "type": "string",
+      "description": "Financial Instrument Global Identifier (FIGI), a 12-character alphanumeric code uniquely identifying the instrument.",
+      "pattern": "^[A-Z0-9]{12}$"
+    },
+    "isin": {
+      "type": "string",
+      "description": "International Securities Identification Number (ISIN).",
+      "pattern": "^[A-Z]{2}[A-Z0-9]{10}$"
+    },
+    "cusip": {
+      "type": "string",
+      "description": "Committee on Uniform Securities Identification Procedures number.",
+      "pattern": "^[A-Z0-9]{9}$"
+    },
+    "sedol": {
+      "type": "string",
+      "description": "Stock Exchange Daily Official List number.",
+      "pattern": "^[A-Z0-9]{7}$"
+    },
+    "sector": {
+      "type": "string",
+      "description": "Bloomberg Industry Classification System (BICS) sector."
+    },
+    "industryGroup": {
+      "type": "string",
+      "description": "Bloomberg Industry Classification System (BICS) industry group."
+    },
+    "marketStatus": {
+      "type": "string",
+      "description": "Current market status for the security.",
+      "enum": ["Active", "Inactive", "Delisted", "Suspended"]
+    }
+  },
+  "$defs": {
+    "SecurityIdentifierSet": {
+      "type": "object",
+      "description": "A collection of alternative identifiers for cross-referencing a security across different systems.",
+      "properties": {
+        "ticker": {
+          "type": "string",
+          "description": "Bloomberg ticker"
+        },
+        "figi": {
+          "type": "string",
+          "description": "Financial Instrument Global Identifier"
+        },
+        "isin": {
+          "type": "string",
+          "description": "International Securities Identification Number"
+        },
+        "cusip": {
+          "type": "string",
+          "description": "CUSIP identifier"
+        },
+        "sedol": {
+          "type": "string",
+          "description": "SEDOL identifier"
+        }
+      }
+    }
+  }
+}

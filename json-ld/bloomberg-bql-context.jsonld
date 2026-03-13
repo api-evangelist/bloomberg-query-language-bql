@@ -1,0 +1,195 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "bbg": "https://api.bloomberg.com/schemas/bql/",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "fibo": "https://spec.edmcouncil.org/fibo/ontology/",
+
+    "BqlQuery": {
+      "@id": "bbg:BqlQuery",
+      "@context": {
+        "expression": "bbg:expression",
+        "universe": "bbg:universe",
+        "currency": "bbg:currency",
+        "calendar": "bbg:calendar",
+        "periodicitySelection": "bbg:periodicitySelection",
+        "fill": "bbg:fill",
+        "pricingSource": "bbg:pricingSource"
+      }
+    },
+
+    "BqlQueryResult": {
+      "@id": "bbg:BqlQueryResult",
+      "@context": {
+        "queryId": {
+          "@id": "dcterms:identifier",
+          "@type": "xsd:string"
+        },
+        "status": "bbg:queryStatus",
+        "createdAt": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "completedAt": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        },
+        "totalRows": {
+          "@id": "bbg:totalRows",
+          "@type": "xsd:integer"
+        },
+        "executionTimeMs": {
+          "@id": "bbg:executionTimeMs",
+          "@type": "xsd:integer"
+        }
+      }
+    },
+
+    "Security": {
+      "@id": "bbg:Security",
+      "@context": {
+        "ticker": {
+          "@id": "bbg:ticker",
+          "@type": "xsd:string"
+        },
+        "name": "schema:name",
+        "shortName": "bbg:shortName",
+        "securityType": "bbg:securityType",
+        "exchange": "bbg:exchange",
+        "country": {
+          "@id": "bbg:country",
+          "@type": "xsd:string"
+        },
+        "currency": {
+          "@id": "bbg:currency",
+          "@type": "xsd:string"
+        },
+        "figi": {
+          "@id": "bbg:figi",
+          "@type": "xsd:string"
+        },
+        "isin": {
+          "@id": "bbg:isin",
+          "@type": "xsd:string"
+        },
+        "cusip": {
+          "@id": "bbg:cusip",
+          "@type": "xsd:string"
+        },
+        "sedol": {
+          "@id": "bbg:sedol",
+          "@type": "xsd:string"
+        },
+        "sector": "bbg:sector",
+        "industryGroup": "bbg:industryGroup"
+      }
+    },
+
+    "Field": {
+      "@id": "bbg:Field",
+      "@context": {
+        "fieldId": {
+          "@id": "dcterms:identifier",
+          "@type": "xsd:string"
+        },
+        "name": "schema:name",
+        "description": "schema:description",
+        "category": "bbg:fieldCategory",
+        "dataType": "bbg:dataType",
+        "assetClasses": "bbg:assetClasses"
+      }
+    },
+
+    "Universe": {
+      "@id": "bbg:Universe",
+      "@context": {
+        "name": "schema:name",
+        "description": "schema:description",
+        "type": "bbg:universeType",
+        "memberCount": {
+          "@id": "bbg:memberCount",
+          "@type": "xsd:integer"
+        },
+        "lastUpdated": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Snapshot": {
+      "@id": "bbg:Snapshot",
+      "@context": {
+        "snapshotId": {
+          "@id": "dcterms:identifier",
+          "@type": "xsd:string"
+        },
+        "status": "bbg:snapshotStatus",
+        "createdAt": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "completedAt": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        },
+        "securitiesCount": {
+          "@id": "bbg:securitiesCount",
+          "@type": "xsd:integer"
+        },
+        "fieldsCount": {
+          "@id": "bbg:fieldsCount",
+          "@type": "xsd:integer"
+        }
+      }
+    },
+
+    "Distribution": {
+      "@id": "bbg:Distribution",
+      "@context": {
+        "distributionId": {
+          "@id": "dcterms:identifier",
+          "@type": "xsd:string"
+        },
+        "filename": "bbg:filename",
+        "contentType": "bbg:contentType",
+        "size": {
+          "@id": "bbg:fileSize",
+          "@type": "xsd:integer"
+        },
+        "downloadUrl": {
+          "@id": "schema:contentUrl",
+          "@type": "@id"
+        },
+        "expiresAt": {
+          "@id": "bbg:expiresAt",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "ResultColumn": {
+      "@id": "bbg:ResultColumn",
+      "@context": {
+        "name": "schema:name",
+        "type": "bbg:dataType",
+        "description": "schema:description",
+        "units": "bbg:units"
+      }
+    },
+
+    "ResultRow": {
+      "@id": "bbg:ResultRow",
+      "@context": {
+        "security": "bbg:ticker",
+        "date": {
+          "@id": "dcterms:date",
+          "@type": "xsd:date"
+        },
+        "values": "bbg:values"
+      }
+    }
+  }
+}

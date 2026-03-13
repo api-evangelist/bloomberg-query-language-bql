@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://api.bloomberg.com/schemas/bql/query.json",
+  "title": "Bloomberg BQL Query",
+  "description": "A Bloomberg Query Language (BQL) query request that specifies securities, data fields, and analytical functions for retrieving financial data from Bloomberg's Enterprise Access Point.",
+  "type": "object",
+  "required": ["expression"],
+  "properties": {
+    "expression": {
+      "type": "string",
+      "description": "BQL query expression using get(), for(), where(), and group() functions to define data retrieval logic. Supports field references, mathematical operations, date functions, and filtering.",
+      "minLength": 1,
+      "examples": [
+        "get(px_last) for(['AAPL US Equity', 'MSFT US Equity'])",
+        "get(px_last, volume) for(members('SPX Index'))",
+        "get(pe_ratio) for(filter(members('SPX Index'), pe_ratio > 20))",
+        "get(avg(px_last, 20)) for(['AAPL US Equity'])",
+        "get(px_last) for(members('SPX Index')) with(dates=range(-1y, 0d), fill=prev)"
+      ]
+    },
+    "universe": {
+      "type": "string",
+      "description": "Optional universe identifier providing a default security set for the query expression when no explicit for() clause is specified.",
+      "examples": ["SPX Index", "MXWO Index"]
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Key-value pairs for parameterized queries, enabling dynamic substitution of values within the BQL expression at runtime.",
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "string" },
+          { "type": "number" },
+          { "type": "boolean" }
+        ]
+      }
+    },
+    "preferences": {
+      "$ref": "#/$defs/QueryPreferences"
+    }
+  },
+  "$defs": {
+    "QueryPreferences": {
+      "type": "object",
+      "description": "Configuration preferences that control query execution behavior, output formatting, and data handling.",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code for converting monetary values in the result set.",
+          "pattern": "^[A-Z]{3}$",
+          "examples": ["USD", "EUR", "GBP", "JPY"]
+        },
+        "calendar": {
+          "type": "string",
+          "description": "Trading calendar identifier used for business day calculations and date alignment.",
+          "examples": ["US", "UK", "JP", "EU", "HK"]
+        },
+        "dateFormat": {
+          "type": "string",
+          "description": "Date formatting convention for output values.",
+          "enum": ["ISO", "US", "EU"]
+        },
+        "fill": {
+          "type": "string",
+          "description": "Strategy for handling missing data points in the result set.",
+          "enum": ["prev", "nil", "na"]
+        },
+        "periodicitySelection": {
+          "type": "string",
+          "description": "Data frequency for time series data retrieval.",
+          "enum": ["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "SEMI_ANNUALLY", "YEARLY"]
+        },
+        "pricingSource": {
+          "type": "string",
+          "description": "Preferred pricing source for market data.",
+          "examples": ["BGN", "CMPL", "EXCH"]
+        }
+      }
+    }
+  }
+}

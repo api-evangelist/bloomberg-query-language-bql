@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://api.bloomberg.com/schemas/bql/result.json",
+  "title": "Bloomberg BQL Query Result",
+  "description": "The result set returned from executing a Bloomberg Query Language (BQL) query, containing columnar data with security identifiers, field values, and associated metadata.",
+  "type": "object",
+  "required": ["queryId", "status"],
+  "properties": {
+    "queryId": {
+      "type": "string",
+      "description": "Unique identifier of the query that produced this result set."
+    },
+    "status": {
+      "type": "string",
+      "description": "Final execution status of the query.",
+      "enum": ["COMPLETED", "FAILED"]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the query was submitted."
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the query finished executing."
+    },
+    "columns": {
+      "type": "array",
+      "description": "Ordered list of column definitions describing each field in the result set.",
+      "items": {
+        "$ref": "#/$defs/ResultColumn"
+      }
+    },
+    "data": {
+      "type": "array",
+      "description": "Array of result rows, each containing a security identifier and its corresponding field values.",
+      "items": {
+        "$ref": "#/$defs/ResultRow"
+      }
+    },
+    "metadata": {
+      "$ref": "#/$defs/ResultMetadata"
+    },
+    "errors": {
+      "type": "array",
+      "description": "Array of errors encountered during query execution, if any.",
+      "items": {
+        "$ref": "#/$defs/QueryError"
+      }
+    }
+  },
+  "$defs": {
+    "ResultColumn": {
+      "type": "object",
+      "description": "Definition of a single column in the BQL query result set.",
+      "required": ["name", "type"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Column name, typically the Bloomberg field mnemonic (e.g., PX_LAST, PE_RATIO)."
+        },
+        "type": {
+          "type": "string",
+          "description": "Data type of the values in this column.",
+          "enum": ["String", "Double", "Int", "Date", "DateTime", "Boolean", "Currency"]
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the column data."
+        },
+        "units": {
+          "type": "string",
+          "description": "Units of measurement for numeric columns (e.g., USD, %, basis points)."
+        }
+      }
+    },
+    "ResultRow": {
+      "type": "object",
+      "description": "A single row of data in the result set, corresponding to one security.",
+      "required": ["security"],
+      "properties": {
+        "security": {
+          "type": "string",
+          "description": "Bloomberg ticker identifying the security for this row."
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date associated with this data point, present in time series results."
+        },
+        "values": {
+          "type": "array",
+          "description": "Ordered array of field values corresponding to the columns definition.",
+          "items": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "number" },
+              { "type": "boolean" },
+              { "type": "null" }
+            ]
+          }
+        }
+      }
+    },
+    "ResultMetadata": {
+      "type": "object",
+      "description": "Metadata about the query execution and result set.",
+      "properties": {
+        "totalRows": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of data rows in the result set."
+        },
+        "totalColumns": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of columns in the result set."
+        },
+        "executionTimeMs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Time in milliseconds taken to execute the query."
+        },
+        "dataAsOf": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp indicating the freshness of the returned data."
+        },
+        "truncated": {
+          "type": "boolean",
+          "description": "Whether the result set was truncated due to size limits."
+        }
+      }
+    },
+    "QueryError": {
+      "type": "object",
+      "description": "An error encountered during BQL query execution.",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Machine-readable error code."
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error description."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security ticker associated with the error, if applicable."
+        },
+        "field": {
+          "type": "string",
+          "description": "Field mnemonic associated with the error, if applicable."
+        }
+      }
+    }
+  }
+}

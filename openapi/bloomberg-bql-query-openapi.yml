@@ -1,0 +1,1001 @@
+openapi: 3.1.0
+info:
+  title: Bloomberg BQL Query API
+  description: >-
+    Bloomberg Query Language (BQL) API provides a structured interface for
+    querying Bloomberg's comprehensive financial data through the Enterprise
+    Access Point (EAP). BQL enables retrieval of market data, fundamentals,
+    analytics, estimates, and custom calculations across global asset classes
+    including equities, fixed income, commodities, and derivatives.
+  version: '1.0'
+  contact:
+    name: Bloomberg Support
+    url: https://www.bloomberg.com/professional/support/
+  termsOfService: https://www.bloomberg.com/notices/tos/
+externalDocs:
+  description: Bloomberg BQL Documentation
+  url: https://bql.bloomberg.com/
+servers:
+  - url: https://api.bloomberg.com/eap
+    description: Bloomberg Enterprise Access Point Production
+tags:
+  - name: Queries
+    description: Execute BQL queries and retrieve results
+  - name: Catalogs
+    description: Browse available data catalogs and datasets
+  - name: Fields
+    description: Search and discover available data fields
+  - name: Universes
+    description: Manage and query security universes
+  - name: Snapshots
+    description: Request and retrieve data snapshots
+security:
+  - bearerAuth: []
+paths:
+  /catalogs/bbg/bql/queries:
+    post:
+      operationId: executeBqlQuery
+      summary: Execute a BQL query
+      description: >-
+        Submit a BQL query expression for execution against Bloomberg data.
+        The query uses BQL syntax to specify securities, data fields, and
+        analytical functions. Returns a query identifier for retrieving
+        results asynchronously.
+      tags:
+        - Queries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BqlQueryRequest'
+      responses:
+        '202':
+          description: Query accepted for processing
+          headers:
+            Location:
+              description: URL to poll for query results
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BqlQueryResponse'
+        '400':
+          description: Invalid BQL query syntax
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or expired token
+        '403':
+          description: Forbidden - insufficient data entitlements
+        '429':
+          description: Rate limit exceeded
+  /catalogs/bbg/bql/queries/{queryId}:
+    get:
+      operationId: getBqlQueryResults
+      summary: Retrieve BQL query results
+      description: >-
+        Retrieve the results of a previously submitted BQL query. If the
+        query is still processing, a 202 status is returned. When complete,
+        the full result set is returned.
+      tags:
+        - Queries
+      parameters:
+        - $ref: '#/components/parameters/queryId'
+      responses:
+        '200':
+          description: Query results ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BqlQueryResultSet'
+        '202':
+          description: Query still processing
+        '401':
+          description: Unauthorized
+        '404':
+          description: Query not found or expired
+    delete:
+      operationId: cancelBqlQuery
+      summary: Cancel a BQL query
+      description: >-
+        Cancel a running BQL query and release associated resources.
+      tags:
+        - Queries
+      parameters:
+        - $ref: '#/components/parameters/queryId'
+      responses:
+        '204':
+          description: Query cancelled successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Query not found
+  /catalogs/bbg/bql/queries/{queryId}/results:
+    get:
+      operationId: downloadBqlQueryResults
+      summary: Download BQL query results
+      description: >-
+        Download the complete result set of a finished BQL query in the
+        specified format. Supports JSON and CSV output formats.
+      tags:
+        - Queries
+      parameters:
+        - $ref: '#/components/parameters/queryId'
+        - name: format
+          in: query
+          description: Output format for query results
+          schema:
+            type: string
+            enum:
+              - json
+              - csv
+            default: json
+      responses:
+        '200':
+          description: Query results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BqlQueryResultSet'
+            text/csv:
+              schema:
+                type: string
+        '202':
+          description: Query still processing
+        '401':
+          description: Unauthorized
+        '404':
+          description: Query not found or expired
+  /catalogs/bbg/fields:
+    get:
+      operationId: listFields
+      summary: List available data fields
+      description: >-
+        Retrieve a list of available Bloomberg data fields that can be used
+        in BQL queries. Supports filtering by category, asset class, and
+        keyword search.
+      tags:
+        - Fields
+      parameters:
+        - name: query
+          in: query
+          description: Search keyword to filter fields
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: Filter fields by category
+          schema:
+            type: string
+            enum:
+              - Fundamentals
+              - Estimates
+              - Pricing
+              - Analytics
+              - Indices
+              - Reference
+              - Technical
+              - ESG
+        - name: assetClass
+          in: query
+          description: Filter fields by asset class
+          schema:
+            type: string
+            enum:
+              - Equity
+              - FixedIncome
+              - Commodity
+              - Currency
+              - Index
+              - Fund
+              - Mortgage
+              - Muni
+              - Pfd
+              - Derivative
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: List of matching fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldListResponse'
+        '401':
+          description: Unauthorized
+  /catalogs/bbg/fields/{fieldId}:
+    get:
+      operationId: getFieldDetails
+      summary: Get field details
+      description: >-
+        Retrieve detailed metadata for a specific Bloomberg data field,
+        including its description, data type, supported overrides, and
+        applicable asset classes.
+      tags:
+        - Fields
+      parameters:
+        - $ref: '#/components/parameters/fieldId'
+      responses:
+        '200':
+          description: Field details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldDetail'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Field not found
+  /catalogs/bbg/universes:
+    get:
+      operationId: listUniverses
+      summary: List available universes
+      description: >-
+        Retrieve a list of available security universes that can be used as
+        data sources in BQL queries. Universes define collections of
+        securities such as index members, sector constituents, or custom
+        portfolios.
+      tags:
+        - Universes
+      parameters:
+        - name: query
+          in: query
+          description: Search keyword to filter universes
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: Filter by universe type
+          schema:
+            type: string
+            enum:
+              - Index
+              - Sector
+              - Portfolio
+              - Custom
+              - Screen
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: List of matching universes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UniverseListResponse'
+        '401':
+          description: Unauthorized
+  /catalogs/bbg/universes/{universeId}:
+    get:
+      operationId: getUniverseDetails
+      summary: Get universe details
+      description: >-
+        Retrieve details of a specific security universe, including its
+        member securities and metadata.
+      tags:
+        - Universes
+      parameters:
+        - $ref: '#/components/parameters/universeId'
+      responses:
+        '200':
+          description: Universe details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UniverseDetail'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Universe not found
+  /catalogs/bbg/snapshots:
+    post:
+      operationId: createSnapshot
+      summary: Create a data snapshot request
+      description: >-
+        Request a point-in-time snapshot of data for a set of securities and
+        fields. Snapshots capture data at a specific moment and make it
+        available for download.
+      tags:
+        - Snapshots
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SnapshotRequest'
+      responses:
+        '202':
+          description: Snapshot request accepted
+          headers:
+            Location:
+              description: URL to poll for snapshot status
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+    get:
+      operationId: listSnapshots
+      summary: List data snapshots
+      description: >-
+        Retrieve a list of previously created data snapshots and their
+        current status.
+      tags:
+        - Snapshots
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: List of snapshots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotListResponse'
+        '401':
+          description: Unauthorized
+  /catalogs/bbg/snapshots/{snapshotId}:
+    get:
+      operationId: getSnapshotStatus
+      summary: Get snapshot status
+      description: >-
+        Retrieve the status and metadata of a specific data snapshot.
+      tags:
+        - Snapshots
+      parameters:
+        - $ref: '#/components/parameters/snapshotId'
+      responses:
+        '200':
+          description: Snapshot details and status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotDetail'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Snapshot not found
+    delete:
+      operationId: deleteSnapshot
+      summary: Delete a snapshot
+      description: >-
+        Delete a data snapshot and its associated results.
+      tags:
+        - Snapshots
+      parameters:
+        - $ref: '#/components/parameters/snapshotId'
+      responses:
+        '204':
+          description: Snapshot deleted
+        '401':
+          description: Unauthorized
+        '404':
+          description: Snapshot not found
+  /catalogs/bbg/snapshots/{snapshotId}/distributions:
+    get:
+      operationId: getSnapshotDistributions
+      summary: Get snapshot result distributions
+      description: >-
+        Retrieve the downloadable distribution files for a completed
+        snapshot. Each distribution represents a file containing the
+        snapshot data.
+      tags:
+        - Snapshots
+      parameters:
+        - $ref: '#/components/parameters/snapshotId'
+      responses:
+        '200':
+          description: List of available distributions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DistributionListResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Snapshot not found
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >-
+        OAuth 2.0 bearer token obtained via Bloomberg Enterprise Access
+        Point authentication using client credentials.
+  parameters:
+    queryId:
+      name: queryId
+      in: path
+      required: true
+      description: Unique identifier for a BQL query
+      schema:
+        type: string
+    fieldId:
+      name: fieldId
+      in: path
+      required: true
+      description: Bloomberg field mnemonic identifier
+      schema:
+        type: string
+    universeId:
+      name: universeId
+      in: path
+      required: true
+      description: Universe unique identifier
+      schema:
+        type: string
+    snapshotId:
+      name: snapshotId
+      in: path
+      required: true
+      description: Snapshot unique identifier
+      schema:
+        type: string
+    limit:
+      name: limit
+      in: query
+      description: Maximum number of results to return
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        default: 100
+    offset:
+      name: offset
+      in: query
+      description: Number of results to skip for pagination
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+  schemas:
+    BqlQueryRequest:
+      type: object
+      required:
+        - expression
+      properties:
+        expression:
+          type: string
+          description: >-
+            BQL query expression string. Uses BQL syntax with get(),
+            for(), and where() functions to specify data retrieval.
+          examples:
+            - "get(px_last) for(['AAPL US Equity', 'MSFT US Equity'])"
+            - "get(px_last, volume) for(members('SPX Index'))"
+            - "get(pe_ratio) for(filter(members('SPX Index'), pe_ratio > 20))"
+        universe:
+          type: string
+          description: >-
+            Optional universe identifier to use as the default security
+            set for the query.
+        parameters:
+          type: object
+          description: >-
+            Optional key-value pairs for parameterized queries, allowing
+            dynamic substitution of values in the expression.
+          additionalProperties:
+            type: string
+        preferences:
+          $ref: '#/components/schemas/QueryPreferences'
+    QueryPreferences:
+      type: object
+      description: Preferences controlling query behavior and output format
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 currency code for data conversion
+          examples:
+            - USD
+            - EUR
+            - GBP
+        calendar:
+          type: string
+          description: Trading calendar to use for date calculations
+          examples:
+            - US
+            - UK
+            - JP
+        dateFormat:
+          type: string
+          description: Date format for output
+          enum:
+            - ISO
+            - US
+            - EU
+        fill:
+          type: string
+          description: Method for handling missing data points
+          enum:
+            - prev
+            - nil
+            - na
+        periodicitySelection:
+          type: string
+          description: Data frequency for time series
+          enum:
+            - DAILY
+            - WEEKLY
+            - MONTHLY
+            - QUARTERLY
+            - SEMI_ANNUALLY
+            - YEARLY
+    BqlQueryResponse:
+      type: object
+      properties:
+        queryId:
+          type: string
+          description: Unique identifier for the submitted query
+        status:
+          type: string
+          enum:
+            - QUEUED
+            - RUNNING
+            - COMPLETED
+            - FAILED
+            - CANCELLED
+          description: Current status of the query
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the query was submitted
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              format: uri
+              description: URL to check query status
+            results:
+              type: string
+              format: uri
+              description: URL to retrieve results when ready
+    BqlQueryResultSet:
+      type: object
+      properties:
+        queryId:
+          type: string
+          description: Query identifier
+        status:
+          type: string
+          enum:
+            - COMPLETED
+            - FAILED
+          description: Final query status
+        completedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the query completed
+        columns:
+          type: array
+          description: Column definitions for the result set
+          items:
+            $ref: '#/components/schemas/ResultColumn'
+        data:
+          type: array
+          description: Array of result rows
+          items:
+            $ref: '#/components/schemas/ResultRow'
+        metadata:
+          $ref: '#/components/schemas/ResultMetadata'
+    ResultColumn:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Column name (field mnemonic)
+        type:
+          type: string
+          description: Data type of the column values
+          enum:
+            - String
+            - Double
+            - Int
+            - Date
+            - DateTime
+            - Boolean
+            - Currency
+        description:
+          type: string
+          description: Human-readable description of the column
+    ResultRow:
+      type: object
+      properties:
+        security:
+          type: string
+          description: Security identifier for this row
+        values:
+          type: array
+          description: >-
+            Array of values corresponding to the result columns in order.
+            Null values indicate missing data.
+          items:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+              - type: 'null'
+    ResultMetadata:
+      type: object
+      properties:
+        totalRows:
+          type: integer
+          description: Total number of rows in the result set
+        totalColumns:
+          type: integer
+          description: Total number of columns in the result set
+        executionTimeMs:
+          type: integer
+          description: Query execution time in milliseconds
+        dataAsOf:
+          type: string
+          format: date-time
+          description: Timestamp indicating when the data was current
+    FieldListResponse:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          description: Total number of matching fields
+        offset:
+          type: integer
+          description: Current offset in the result set
+        limit:
+          type: integer
+          description: Maximum number of results returned
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldSummary'
+    FieldSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Field mnemonic identifier
+        name:
+          type: string
+          description: Human-readable field name
+        description:
+          type: string
+          description: Brief description of the field
+        category:
+          type: string
+          description: Field category
+        dataType:
+          type: string
+          description: Data type returned by the field
+    FieldDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Field mnemonic identifier
+        name:
+          type: string
+          description: Human-readable field name
+        description:
+          type: string
+          description: Detailed description of the field
+        category:
+          type: string
+          description: Field category
+        dataType:
+          type: string
+          description: Data type returned by the field
+          enum:
+            - String
+            - Double
+            - Int
+            - Date
+            - DateTime
+            - Boolean
+            - Currency
+        assetClasses:
+          type: array
+          description: Asset classes where this field is applicable
+          items:
+            type: string
+        overrides:
+          type: array
+          description: Available override parameters for this field
+          items:
+            $ref: '#/components/schemas/FieldOverride'
+        examples:
+          type: array
+          description: Example BQL expressions using this field
+          items:
+            type: string
+    FieldOverride:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Override parameter name
+        description:
+          type: string
+          description: Description of the override
+        dataType:
+          type: string
+          description: Expected data type for the override value
+        required:
+          type: boolean
+          description: Whether the override is required
+    UniverseListResponse:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          description: Total number of matching universes
+        offset:
+          type: integer
+          description: Current offset
+        limit:
+          type: integer
+          description: Maximum results returned
+        universes:
+          type: array
+          items:
+            $ref: '#/components/schemas/UniverseSummary'
+    UniverseSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Universe identifier
+        name:
+          type: string
+          description: Universe display name
+        type:
+          type: string
+          description: Universe type
+        memberCount:
+          type: integer
+          description: Number of securities in the universe
+    UniverseDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Universe identifier
+        name:
+          type: string
+          description: Universe display name
+        type:
+          type: string
+          description: Universe type
+        description:
+          type: string
+          description: Universe description
+        memberCount:
+          type: integer
+          description: Number of securities in the universe
+        members:
+          type: array
+          description: List of member securities
+          items:
+            $ref: '#/components/schemas/SecurityIdentifier'
+        lastUpdated:
+          type: string
+          format: date-time
+          description: Last update timestamp
+    SecurityIdentifier:
+      type: object
+      properties:
+        ticker:
+          type: string
+          description: Bloomberg ticker symbol
+        name:
+          type: string
+          description: Security name
+        type:
+          type: string
+          description: Security type
+        exchange:
+          type: string
+          description: Exchange where the security is listed
+        figi:
+          type: string
+          description: Financial Instrument Global Identifier
+    SnapshotRequest:
+      type: object
+      required:
+        - securities
+        - fields
+      properties:
+        securities:
+          type: array
+          description: List of security identifiers to include
+          items:
+            type: string
+          examples:
+            - - AAPL US Equity
+              - MSFT US Equity
+        fields:
+          type: array
+          description: List of field mnemonics to retrieve
+          items:
+            type: string
+          examples:
+            - - PX_LAST
+              - VOLUME
+              - PE_RATIO
+        universe:
+          type: string
+          description: >-
+            Alternative to securities - specify a universe identifier
+            to include all its members
+        startDate:
+          type: string
+          format: date
+          description: Start date for historical data
+        endDate:
+          type: string
+          format: date
+          description: End date for historical data
+        frequency:
+          type: string
+          description: Data frequency for time series
+          enum:
+            - DAILY
+            - WEEKLY
+            - MONTHLY
+            - QUARTERLY
+            - YEARLY
+    SnapshotResponse:
+      type: object
+      properties:
+        snapshotId:
+          type: string
+          description: Unique identifier for the snapshot
+        status:
+          type: string
+          enum:
+            - QUEUED
+            - PROCESSING
+            - COMPLETED
+            - FAILED
+          description: Current status of the snapshot
+        createdAt:
+          type: string
+          format: date-time
+          description: Snapshot creation timestamp
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              format: uri
+            distributions:
+              type: string
+              format: uri
+    SnapshotListResponse:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+        offset:
+          type: integer
+        limit:
+          type: integer
+        snapshots:
+          type: array
+          items:
+            $ref: '#/components/schemas/SnapshotSummary'
+    SnapshotSummary:
+      type: object
+      properties:
+        snapshotId:
+          type: string
+          description: Snapshot identifier
+        status:
+          type: string
+          description: Current status
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+    SnapshotDetail:
+      type: object
+      properties:
+        snapshotId:
+          type: string
+          description: Snapshot identifier
+        status:
+          type: string
+          enum:
+            - QUEUED
+            - PROCESSING
+            - COMPLETED
+            - FAILED
+          description: Current status
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+        securitiesCount:
+          type: integer
+          description: Number of securities in the snapshot
+        fieldsCount:
+          type: integer
+          description: Number of fields requested
+        distributionCount:
+          type: integer
+          description: Number of result distribution files
+        error:
+          type: string
+          description: Error message if the snapshot failed
+    DistributionListResponse:
+      type: object
+      properties:
+        distributions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Distribution'
+    Distribution:
+      type: object
+      properties:
+        distributionId:
+          type: string
+          description: Distribution file identifier
+        snapshotId:
+          type: string
+          description: Parent snapshot identifier
+        filename:
+          type: string
+          description: Distribution filename
+        contentType:
+          type: string
+          description: MIME type of the distribution file
+        size:
+          type: integer
+          description: File size in bytes
+        downloadUrl:
+          type: string
+          format: uri
+          description: Signed URL for downloading the distribution
+        expiresAt:
+          type: string
+          format: date-time
+          description: Expiration time for the download URL
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+            message:
+              type: string
+              description: Human-readable error message
+            details:
+              type: array
+              description: Additional error details
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                  message:
+                    type: string
