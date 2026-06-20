@@ -7,7 +7,7 @@ description: Bloomberg Query Language (BQL) is a proprietary query language for
   of securities and data points. Available in the Bloomberg Terminal, Excel Add-in,
   and via API.
 type: Index
-image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 url: https://raw.githubusercontent.com/api-evangelist/bloomberg-query-language-bql/refs/heads/main/apis.yml
 created: '2024-01-01'
 modified: '2026-04-21'
