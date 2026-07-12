@@ -51,6 +51,8 @@ apis:
   - type: Documentation
     url: https://www.bloomberg.com/professional/solution/bloomberg-excel/
 common:
+- type: DomainSecurity
+  url: security/bloomberg-query-language-bql-domain-security.yml
 - type: Portal
   url: https://www.bloomberg.com/professional/
 - type: Documentation
