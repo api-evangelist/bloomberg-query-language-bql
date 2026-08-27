@@ -1,11 +1,9 @@
 aid: bloomberg-query-language-bql
 name: Bloomberg Query Language (BQL)
-description: Bloomberg Query Language (BQL) is a proprietary query language for
-  accessing, filtering, aggregating, and computing on Bloomberg's financial data universe.
-  BQL enables users to write flexible data requests that go beyond standard API fields,
-  supporting derived calculations, time series expressions, and complex filtering
-  of securities and data points. Available in the Bloomberg Terminal, Excel Add-in,
-  and via API.
+description: Bloomberg Query Language (BQL) is a proprietary query language for accessing, filtering, aggregating,
+  and computing on Bloomberg's financial data universe. BQL enables users to write flexible data requests that go
+  beyond standard API fields, supporting derived calculations, time series expressions, and complex filtering of
+  securities and data points. Available in the Bloomberg Terminal, Excel Add-in, and via API.
 type: Index
 accessModel:
   pricing: freemium
@@ -22,7 +20,7 @@ accessModel:
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/bloomberg-query-language-bql.png
 url: https://raw.githubusercontent.com/api-evangelist/bloomberg-query-language-bql/refs/heads/main/apis.yml
 created: '2024-01-01'
-modified: '2026-04-21'
+modified: '2026-08-27'
 specificationVersion: '0.23'
 tags:
 - BQL
@@ -34,9 +32,9 @@ tags:
 apis:
 - aid: bloomberg-query-language-bql:bql-api
   name: Bloomberg Query Language (BQL) API
-  description: Execute BQL queries programmatically via the Bloomberg API to retrieve
-    custom computed financial data, filtered security sets, and time series expressions
-    from Bloomberg's data universe. Accessible via BLPAPI and Bloomberg Excel Add-in.
+  description: Execute BQL queries programmatically via the Bloomberg API to retrieve custom computed financial
+    data, filtered security sets, and time series expressions from Bloomberg's data universe. Accessible via BLPAPI
+    and Bloomberg Excel Add-in.
   humanURL: https://www.bloomberg.com/professional/support/api-library/
   baseURL: blpapi://localhost:8194
   tags:
@@ -49,9 +47,8 @@ apis:
     url: https://www.bloomberg.com/professional/support/api-library/
 - aid: bloomberg-query-language-bql:bql-excel
   name: BQL in Bloomberg Excel Add-in
-  description: Use Bloomberg Query Language directly in Microsoft Excel to execute
-    complex data queries and retrieve computed results in spreadsheet cells. Supports
-    multi-row outputs, time series, and calculated fields.
+  description: Use Bloomberg Query Language directly in Microsoft Excel to execute complex data queries and retrieve
+    computed results in spreadsheet cells. Supports multi-row outputs, time series, and calculated fields.
   humanURL: https://www.bloomberg.com/professional/solution/bloomberg-excel/
   baseURL: https://bloomberg.com/bql-excel
   tags:
@@ -63,6 +60,11 @@ apis:
   - type: Documentation
     url: https://www.bloomberg.com/professional/solution/bloomberg-excel/
 common:
+- type: ParentCompany
+  url: https://apis.io/providers/bloomberg/
+  name: Bloomberg
+  x-relationship: product
+  x-generated-by: bloomberg-family:2026-08-27
 - type: DomainSecurity
   url: security/bloomberg-query-language-bql-domain-security.yml
 - type: Portal
@@ -104,3 +106,5 @@ common:
 maintainers:
 - FN: Kin Lane
   email: kinlane@gmail.com
+x-parent: bloomberg
+x-relationship: product
