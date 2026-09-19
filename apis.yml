@@ -67,6 +67,11 @@ apis:
   tags:
   - BQL
   - Excel
+  - Spreadsheets
+  - Formulas
+  tags_raw:
+  - BQL
+  - Excel
   - Spreadsheet
   - Formulas
   properties:
