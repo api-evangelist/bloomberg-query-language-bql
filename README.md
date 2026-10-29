@@ -64,19 +64,106 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Bloomberg Query Language (BQL) is a proprietary query language for accessing, filtering, aggregating, and computing on Bloomberg's financial data universe. BQL enables users to write flexible data requests supporting derived calculations, time series expressions, and complex filtering.
+Bloomberg Query Language (BQL) is a proprietary query language for accessing, filtering, aggregating, and computing on Bloomberg's financial data universe. BQL enables users to write flexible data requests that go beyond standard API fields, supporting derived calculations, time series expressions, and complex filtering of securities and data points. Available in the Bloomberg Terminal, Excel Add-in, and via API.
 
-## APIs
+**Areas:** BQL · Query Language · Financial Data · Analytics · Data Query · Bloomberg
 
-- **Bloomberg Query Language (BQL) API** - Execute BQL queries programmatically via BLPAPI
-- **BQL in Bloomberg Excel Add-in** - BQL query execution directly in Excel
+## Bloomberg Query Language (BQL) on APIs.io
 
-## Resources
+Everything profiled for Bloomberg Query Language (BQL) is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/bloomberg-query-language-bql/](https://apis.io/providers/bloomberg-query-language-bql/)** — or go straight to one of the APIs or properties below.
 
-- [Bloomberg API Library](https://www.bloomberg.com/professional/support/api-library/)
-- [Bloomberg Excel Solution](https://www.bloomberg.com/professional/solution/bloomberg-excel/)
-- [Bloomberg Professional Portal](https://www.bloomberg.com/professional/)
+### APIs (2)
 
-## Profile
+- [Bloomberg Query Language (BQL) API](https://apis.io/apis/bloomberg-query-language-bql/bql-api/) — Execute BQL queries programmatically via the Bloomberg API to retrieve custom computed financial data, filtered security sets, and time series expressions…
+- [BQL in Bloomberg Excel Add-in](https://apis.io/apis/bloomberg-query-language-bql/bql-excel/) — Use Bloomberg Query Language directly in Microsoft Excel to execute complex data queries and retrieve computed results in spreadsheet cells. Supports…
 
-See [apis.yml](apis.yml) for the full API profile.
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### Security (1)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Bloomberg Query Language Bql Domain Security](https://apis.io/security/bloomberg-query-language-bql/bloomberg-query-language-bql-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Bloomberg Query Language Bql Plans Pricing](https://apis.io/plans/bloomberg-query-language-bql/bloomberg-query-language-bql-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Bloomberg Query Language Bql Rate Limits](https://apis.io/rate-limits/bloomberg-query-language-bql/bloomberg-query-language-bql-rate-limits/)
+
+#### FinOps (1)
+
+What the API costs to run, by operation.
+
+- [Bloomberg Query Language Bql Finops](https://apis.io/finops/bloomberg-query-language-bql/bloomberg-query-language-bql-finops/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://bloomberg.com)
+- [Documentation](https://www.bloomberg.com/professional/support/api-library/)
+- [Support](https://www.bloomberg.com/professional/support/)
+- [Terms of service](https://www.bloomberg.com/notices/tos/)
+- [Privacy policy](https://www.bloomberg.com/privacy/)
+
+## API Evangelist rating
+
+**Kin Score 17.1** — emerging · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 57.1 |
+| Contract quality | 0.0 |
+| Contract governance | 0.0 |
+| Operational transparency | 7.9 |
+| Developer ergonomics | 23.8 |
+| Access clarity | 28.9 |
+
+**Agent readiness 0.6** — human-only
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | — |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | — |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 13.7** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/bloomberg-query-language-bql/](https://apis.io/providers/bloomberg-query-language-bql/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Bloomberg Query Language (BQL): the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/bloomberg-query-language-bql/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
